@@ -8,11 +8,12 @@ namespace _01._Party_Profit
         {
             int partySize = int.Parse(Console.ReadLine());
             int days = int.Parse(Console.ReadLine());
+
             int coins = 0;
 
             for (int i = 1; i <= days; i++)
             {
-                if (i%10==0)
+                if (i % 10 == 0)
                 {
                     partySize -= 2;
                 }
@@ -20,25 +21,22 @@ namespace _01._Party_Profit
                 {
                     partySize += 5;
                 }
-
-                coins += 50 - 2 * partySize;
-
+                coins += 50 + 2 * partySize;
                 if (i % 3 == 0)
                 {
-                    coins -= 3*partySize;
+                    coins -= partySize * 3;
                 }
                 if (i % 5 == 0)
                 {
-                    coins += 20 * partySize;
+                    coins += partySize * 20;
                 }
                 if (i % 15 == 0)
                 {
-                    coins -= 2 * partySize;
+                    coins -= partySize * 2;
                 }
             }
 
-            int coinsPerCompanion = coins / partySize;
-            Console.WriteLine($"{partySize} companions received {coinsPerCompanion} coins each.");
+            Console.WriteLine($"{partySize} companions received {coins/partySize} coins each.");
         }
     }
 }

@@ -17,46 +17,94 @@ namespace _03._Quests_Journal
                 {
                     break;
                 }
-
-                string command = input.Split(" - ")[0];
-                if (command == "Start")
+                string[] commandLine = input.Split(" - ");
+                string command = commandLine[0];
+                string quest = commandLine[1];
+                switch (command)
                 {
-                    string quest = input.Split(" - ")[1];
-                    if (!quests.Contains(quest))
-                    {
-                        quests.Add(quest);
-                    }
-                }
-                else if (command == "Complete")
-                {
-                    string quest = input.Split(" - ")[1];
-                    if (quests.Contains(quest))
-                    {
-                        quests.Remove(quest);
-                    }
-                }
-                else if (command == "Side Quest")
-                {
-                    string quest = input.Split(" - ")[1].Split(':')[0];
-                    string sideQuest = input.Split(" - ")[1].Split(':')[1];
-                    if (quests.Contains(quest) && !quests.Contains(sideQuest))
-                    {
-                        int index = quests.IndexOf(quest);
-                        quests.Insert(index + 1, sideQuest);
-                    }
-                }
-                else if (command == "Renew")
-                {
-                    string quest = input.Split(" - ")[1];
-                    if (quests.Contains(quest))
-                    {
-                        quests.Remove(quest);
-                        quests.Add(quest);
-                    }
+                    case "Start":
+                        Start(quest, quests);
+                        break;
+                    case "Complete":
+                        Complete(quest, quests);
+                        break;
+                    case "Side Quest":
+                        SideQuest(quest, quests);
+                        break;
+                    case "Renew":
+                        Renew(quest, quests);
+                        break;
+                    default: break;
                 }
             }
 
             Console.WriteLine(string.Join(", ", quests));
+        }
+
+        private static void SideQuest(string quest, List<string> quests)
+        {
+            string[] sideQuestLine = quest.Split(':');
+            string sideQuestParent = sideQuestLine[0];
+            string sideQuestChild = sideQuestLine[1];
+            if (IsQuestExist(sideQuestParent, quests) && !IsQuestExist(sideQuestChild, quests))
+            {
+                int indexOfParent = quests.IndexOf(sideQuestParent);
+                quests.Insert(indexOfParent + 1, sideQuestChild);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private static void Renew(string quest, List<string> quests)
+        {
+            if (IsQuestExist(quest, quests))
+            {
+                quests.Remove(quest);
+                quests.Add(quest);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private static void Complete(string quest, List<string> quests)
+        {
+            if (IsQuestExist(quest, quests))
+            {
+                quests.Remove(quest);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private static void Start(string quest, List<string> quests)
+        {
+            if (IsQuestExist(quest, quests))
+            {
+                return;
+            }
+            else
+            {
+                quests.Add(quest);
+            }
+        }
+
+        private static bool IsQuestExist(string quest, List<string> quests)
+        {
+            bool isQuestExist = false;
+            foreach (var item in quests)
+            {
+                if (item == quest)
+                {
+                    isQuestExist = true;
+                }
+            }
+            return isQuestExist;
         }
     }
 }

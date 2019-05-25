@@ -8,7 +8,8 @@ namespace _02._Santa_s_List
     {
         static void Main(string[] args)
         {
-            List<string> kidsList = Console.ReadLine().Split('&').ToList();
+            List<string> noisyKids = Console.ReadLine()
+                                     .Split('&').ToList();
 
             while (true)
             {
@@ -17,47 +18,76 @@ namespace _02._Santa_s_List
                 {
                     break;
                 }
+                string[] commandLine = input.Split();
+                string command = commandLine[0];
+                string kidName = commandLine[1];
 
-                string command = input.Split()[0];
-                if (command == "Bad")
+                switch (command)
                 {
-                    string kidName = input.Split()[1];
-                    if (!kidsList.Contains(kidName))
-                    {
-                        kidsList.Insert(0, kidName);
-                    }
-                }
-                else if (command == "Good")
-                {
-                    string kidName = input.Split()[1];
-                    if (kidsList.Contains(kidName))
-                    {
-                        kidsList.Remove(kidName);
-                    }
-                }
-                else if (command == "Rename")
-                {
-                    string oldName = input.Split()[1];
-                    string newName = input.Split()[2];
-                    if (kidsList.Contains(oldName))
-                    {
-                        int index = kidsList.IndexOf(oldName);
-                        kidsList.Remove(oldName);
-                        kidsList.Insert(index, newName);
-                    }
-                }
-                else if (command == "Rearrange")
-                {
-                    string kidName = input.Split()[1];
-                    if (kidsList.Contains(kidName))
-                    {
-                        kidsList.Remove(kidName);
-                        kidsList.Add(kidName);
-                    }
+                    case "Bad":
+                        Bad(kidName, noisyKids);
+                        break;
+                    case "Good":
+                        Good(kidName, noisyKids);
+                        break;
+                    case "Rename":
+                        string newKidName = commandLine[2];
+                        Rename(kidName, newKidName, noisyKids);
+                        break;
+                    case "Rearrange":
+                        Rearrange(kidName, noisyKids);
+                        break;
+                    default: break;
                 }
             }
+            Console.WriteLine(string.Join(", ", noisyKids));
+        }
 
-            Console.WriteLine(string.Join(", ", kidsList));
+        private static void Rename(string kidName, string newKidName, List<string> noisyKids)
+        {
+            if (IsKidExist(kidName, noisyKids))
+            {
+                int indexKidName = noisyKids.IndexOf(kidName);
+                noisyKids[indexKidName] = newKidName;
+            }
+        }
+
+        private static void Rearrange(string kidName, List<string> noisyKids)
+        {
+            if (IsKidExist(kidName, noisyKids))
+            {
+                noisyKids.Remove(kidName);
+                noisyKids.Add(kidName);
+            }
+        }
+
+        private static void Good(string kidName, List<string> noisyKids)
+        {
+            if (IsKidExist(kidName, noisyKids))
+            {
+                noisyKids.Remove(kidName);
+            }
+        }
+
+        private static void Bad(string kidName, List<string> noisyKids)
+        {
+            if (!IsKidExist(kidName, noisyKids))
+            {
+                noisyKids.Insert(0, kidName);
+            }
+        }
+
+        private static bool IsKidExist(string kidName, List<string> noisyKids)
+        {
+            bool isKidExist = false;
+            foreach (var kid in noisyKids)
+            {
+                if (kid == kidName)
+                {
+                    isKidExist = true;
+                }
+            }
+            return isKidExist;
         }
     }
 }

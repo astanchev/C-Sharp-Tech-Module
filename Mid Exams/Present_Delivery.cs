@@ -7,11 +7,12 @@ namespace _03._Present_Delivery
     {
         static void Main(string[] args)
         {
-            int[] housesMembers = Console.ReadLine()
-                                        .Split('@')
-                                        .Select(int.Parse)
-                                        .ToArray();
-            int currentPosition = 0;
+            int[] houses = Console.ReadLine()
+                                .Split('@')
+                                .Select(int.Parse)
+                                .ToArray();
+
+            int indexSanta = 0;
 
             while (true)
             {
@@ -20,43 +21,68 @@ namespace _03._Present_Delivery
                 {
                     break;
                 }
+                string[] command = input.Split();
+                int jumpLenght = int.Parse(command[1]);
 
-                int length = int.Parse(input.Split()[1]);
-                currentPosition += length;
-                if (currentPosition > housesMembers.Length - 1)
-                {
-                    currentPosition = currentPosition % housesMembers.Length;
-                }
-                if (housesMembers[currentPosition] == 0)
-                {
-                    Console.WriteLine($"House {currentPosition} will have a Merry Christmas.");
-                }
-                else
-                {
-                    housesMembers[currentPosition] -= 2;
-                }
+                indexSanta = Jump(jumpLenght, indexSanta, houses);
             }
 
-            Console.WriteLine($"Santa's last position was {currentPosition}.");
+            PrintResult(indexSanta, houses);
+        }
 
-            int countEmptyHouse = 0;
-            foreach (var house in housesMembers)
+        private static int Jump(int jumpLenght, int indexSanta, int[] houses)
+        {
+            indexSanta = (indexSanta + jumpLenght) % houses.Length;
+
+            if (houses[indexSanta]>=2)
             {
-                if (house == 0)
-                {
-                    countEmptyHouse++;
-                }
+                houses[indexSanta] -= 2;
             }
+            else
+            {
+                Console.WriteLine($"House {indexSanta} will have a Merry Christmas.");
+            }
+            return indexSanta;
+        }
 
-            if (countEmptyHouse == housesMembers.Length)
+        private static void PrintResult(int indexSanta, int[] houses)
+        {
+            Console.WriteLine($"Santa's last position was {indexSanta}.");
+            if (IsMissionSuccess(houses))
             {
                 Console.WriteLine("Mission was successful.");
             }
             else
             {
-                Console.WriteLine($"Santa has failed {housesMembers.Length - countEmptyHouse} houses.");
+                int failedHouses = GetFailedHouses(houses);
+                Console.WriteLine($"Santa has failed {failedHouses} houses.");
             }
+        }
 
+        private static bool IsMissionSuccess(int[] houses)
+        {
+            bool isMissionSuccess = true;
+            foreach (var house in houses)
+            {
+                if (house > 0)
+                {
+                    return false;
+                }
+            }
+            return isMissionSuccess;
+        }
+
+        private static int GetFailedHouses(int[] houses)
+        {
+            int numberFailedHouses = 0;
+            foreach (var house in houses)
+            {
+                if (house > 0)
+                {
+                    numberFailedHouses++;
+                }
+            }
+            return numberFailedHouses;
         }
     }
 }
