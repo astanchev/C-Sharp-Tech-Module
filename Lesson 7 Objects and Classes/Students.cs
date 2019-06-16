@@ -2,54 +2,67 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace _04._Students
+namespace _05._Students
 {
-    class Students
+    class Student
     {
-        public Students(string firstName, string lastName, double grade)
-        {
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Grade = grade;
-        }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
-        public double Grade { get; set; }
+        public string Age { get; set; }
 
-        public override string ToString()
+        public string Hometown { get; set; }
+
+        public Student(string[] students)
         {
-            return $"{FirstName} {LastName}: {Grade:f2}";
+            this.FirstName = students[0];
+            this.LastName = students[1];
+            this.Age = students[2];
+            this.Hometown = students[3];
         }
     }
-
 
     class Program
     {
         static void Main(string[] args)
         {
-            int numberStudents = int.Parse(Console.ReadLine());
-            List<Students> studentsList = new List<Students>();
-            for (int i = 0; i < numberStudents; i++)
+            List<Student> studentsList = new List<Student>();
+            while (true)
             {
-                string[] inputLine = Console.ReadLine().Split();
-                string firstName = inputLine[0];
-                string lastName = inputLine[1];
-                double grade = double.Parse(inputLine[2]);
-
-                Students newStudent = new Students(firstName, lastName, grade);
+                string input = Console.ReadLine();
+                if (input == "end")
+                {
+                    break;
+                }
+                string[] students = input.Split().ToArray();
+                Student newStudent = new Student(students);
                 studentsList.Add(newStudent);
-            }
-            List<Students> orderedtudentsList = studentsList
-                                                .OrderByDescending(s => s.Grade)
-                                                .ToList();
 
-            foreach (var student in orderedtudentsList)
-            {
-                Console.WriteLine(student.ToString());
             }
+
+            string inputCity = Console.ReadLine();
+
+            List<Student> filteredList = studentsList
+                                        .Where(s => s.Hometown == inputCity)
+                                        .ToList();
+
+            foreach (var student in filteredList)
+            {
+                Console.WriteLine($"{student.FirstName} " +
+                        $"{ student.LastName} is " +
+                        $"{student.Age} years old.");
+            }
+
+            //foreach (var student in studentsList)
+            //{
+            //    if (student.Hometown==inputCity)
+            //    {
+            //        Console.WriteLine($"{student.FirstName} " +
+            //            $"{ student.LastName} is " +
+            //            $"{student.Age} years old.");
+            //    }
+            //}
         }
     }
 }
