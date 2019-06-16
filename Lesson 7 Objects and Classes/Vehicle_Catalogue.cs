@@ -2,113 +2,122 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace _06._Vehicle_Catalogue
+namespace _08._Vehicle_Catalogue
 {
-    class Vehicle
+    class Truck
     {
-        public Vehicle(string type, string model, string color, int horsePower)
-        {
-            this.Type = type;
-            this.Model = model;
-            this.Color = color;
-            this.HorsePower = horsePower;
-        }
-
-        public string Type { get; set; }
+        public string Brand { get; set; }
 
         public string Model { get; set; }
 
-        public string Color { get; set; }
+        public int Weight { get; set; }
+    }
+
+    class Car
+    {
+        public string Brand { get; set; }
+
+        public string Model { get; set; }
 
         public int HorsePower { get; set; }
     }
 
+    class Catalog
+    {
+        public Catalog()
+        {
+            this.CollectionCars = new List<Car>();
+            this.CollectionTrucks = new List<Truck>();
+        }
+
+        public List<Truck> CollectionTrucks { get; set; }
+
+        public List<Car> CollectionCars { get; set; }
+    }
 
     class Program
     {
         static void Main(string[] args)
         {
-            List<Vehicle> vehicleList = new List<Vehicle>();
-
-            AddToLists(vehicleList);
-
-            PrintVehicleInformation(vehicleList);
-
-            List<Vehicle> carsList = vehicleList.Where(v => v.Type == "Car").ToList();
-            List<Vehicle> trucksList = vehicleList.Where(v => v.Type == "Truck").ToList();
-
-            double averageCarsHorsepower = CalculateAverageHorsepower(carsList);
-            double averageTrucksHorsepower = CalculateAverageHorsepower(trucksList);
-
-            Console.WriteLine($"Cars have average horsepower of: {averageCarsHorsepower:f2}.");
-            Console.WriteLine($"Trucks have average horsepower of: {averageTrucksHorsepower:f2}.");
-
-        }
-
-        private static double CalculateAverageHorsepower(List<Vehicle> listOfVehicles)
-        {
-            double averageHorsepower = 0.0;
-            int sumHorsePower = 0;
-            foreach (var vehicle in listOfVehicles)
-            {
-                sumHorsePower += vehicle.HorsePower;
-            }
-            if (listOfVehicles.Count > 0)
-            {
-                averageHorsepower = 1.0 * sumHorsePower / listOfVehicles.Count;
-            }
-            return averageHorsepower;
-        }
-
-        private static void PrintVehicleInformation(List<Vehicle> vehicleList)
-        {
-            while (true)
-            {
-                string modelVehicle = Console.ReadLine();
-                if (modelVehicle == "Close the Catalogue")
-                {
-                    return;
-                }
-                foreach (var vehicle in vehicleList)
-                {
-                    if (vehicle.Model == modelVehicle)
-                    {
-                        Console.WriteLine($"Type: {vehicle.Type}");
-                        Console.WriteLine($"Model: {vehicle.Model}");
-                        Console.WriteLine($"Color: {vehicle.Color}");
-                        Console.WriteLine($"Horsepower: {vehicle.HorsePower}");
-                    }
-                }
-            }
-        }
-
-        private static void AddToLists(List<Vehicle> vehicleList)
-        {
+            List<Car> carList = new List<Car>();
+            List<Truck> truckList = new List<Truck>();
             while (true)
             {
                 string inputLine = Console.ReadLine();
-                if (inputLine == "End")
+                if (inputLine=="end")
                 {
-                    return;
+                    break;
                 }
-                string[] inputVehicles = inputLine.Split();
-                string typeOfVehicle = StringToTitleCase(inputVehicles[0]);
-                string model = inputVehicles[1];
-                string color = inputVehicles[2];
-                int horsePower = int.Parse(inputVehicles[3]);
+                string[] vehicles = inputLine.Split('/').ToArray();
+                string typeOfVehicle = vehicles[0];
+                string brandOfVehicle = vehicles[1];
+                string modelOfVehicle = vehicles[2];
+                if (typeOfVehicle=="Car")
+                {
+                    int horsePower = int.Parse(vehicles[3]);
+                    Car newCar = new Car()
+                    {
+                        Brand = brandOfVehicle,
+                        Model = modelOfVehicle,
+                        HorsePower = horsePower
+                    };
+                    carList.Add(newCar);
+                }
+                else
+                {
+                    int weight = int.Parse(vehicles[3]);
+                    Truck newTruck = new Truck()
+                    {
+                        Brand = brandOfVehicle,
+                        Model = modelOfVehicle,
+                        Weight = weight
+                    };
+                    truckList.Add(newTruck);
+                }                
+            }
+            List<Car> orderedCarList = carList.OrderBy(c => c.Brand).ToList();
+            List<Truck> orderedTruckList = truckList.OrderBy(t => t.Brand).ToList();
 
-                Vehicle newVehicle = new Vehicle(typeOfVehicle, model, color, horsePower);
-                vehicleList.Add(newVehicle);
+            Catalog newCatalog = new Catalog()
+            {
+                CollectionCars = orderedCarList.ToList(),
+                CollectionTrucks = orderedTruckList.ToList()                
+            };
+
+            PrintCatalog(newCatalog);
+            
+        }
+
+        private static void PrintCatalog(Catalog newCatalog)
+        {
+            if (newCatalog.CollectionCars.Count>0)
+            {
+                PrintCars(newCatalog.CollectionCars);
+            }
+            if (newCatalog.CollectionTrucks.Count>0)
+            {
+                PrintTrucks(newCatalog.CollectionTrucks);
             }
         }
 
-        private static string StringToTitleCase(string inputString)
+        private static void PrintTrucks(List<Truck> orderedTruckList)
         {
+            Console.WriteLine("Trucks:");
+            for (int i = 0; i < orderedTruckList.Count; i++)
+            {
+                Truck element = orderedTruckList[i];
+                Console.WriteLine($"{element.Brand}: {element.Model} - {element.Weight}kg");
+            }
+        }
 
-            char[] inputStringTochars = inputString.ToArray();
-            inputStringTochars[0] = char.ToUpper(inputStringTochars[0]);
-            string newString = new string(inputStringTochars);
-            return newString;
+        private static void PrintCars(List<Car> orderedCarList)
+        {
+            Console.WriteLine("Cars:");
+            for (int i = 0; i < orderedCarList.Count; i++)
+            {
+                Car element = orderedCarList[i];
+                Console.WriteLine($"{element.Brand}: {element.Model} - {element.HorsePower}hp");
+            }
         }
     }
 }
